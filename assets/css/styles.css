@@ -1,0 +1,31 @@
+:root{
+   --theme-color1: rgb(26, 18, 11);
+   --theme-color2: rgb(60, 42, 33);
+   --theme-color3: rgb(213, 206, 163);
+   --theme-color4: rgb(229, 229, 203);
+
+   --theme-color4-transp: rgba(229, 229, 203, 0.8);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto", sans-serif;
+}
+
+body {
+  height: 100vh;
+  background-color: var(--theme-color1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 60%;
+  height: 250px;
+  background-color: var(--theme-color4);
+  border-radius: 15px;
+  shadow: 0 0 3px;
+}
