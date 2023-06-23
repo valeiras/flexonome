@@ -1,2 +1,2 @@
 # web-metronome
-Web-based metronome with additive rythm functionality
+Web-based metronome with additive rythm functionality, accesible in [this link](https://valeiras.github.io/web-metronome/)
