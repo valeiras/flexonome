@@ -13,8 +13,7 @@
 
 body {
   height: 100vh;
-  background: url("../images/Prettier-glock.jpg")
-    no-repeat center/cover;
+  background: url("../images/Prettier-glock.jpg") no-repeat center/cover;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -24,7 +23,6 @@ body {
 }
 
 .container {
-  /* width: 30%; */
   width: fit-content;
   min-width: 300px;
   padding: 20px;
@@ -118,7 +116,7 @@ div.note {
 div.note.strong {
   width: 0.8rem;
   height: 0.8rem;
-  margin:0rem;
+  margin: 0rem;
 }
 
 div.note.active {
@@ -196,4 +194,15 @@ button {
 .remove-btn:hover:enabled {
   color: #fff;
   background-color: #000;
+}
+
+#author {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  font-size: 1.5rem;
+  background-color: rgba(63, 63, 63, 0.6);
+  padding: 10px;
+  color: #ddd;
+  border-radius: 10px;
 }

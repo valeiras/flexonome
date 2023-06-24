@@ -74,9 +74,7 @@ function getCurrNote() {
 }
 
 function toggleCurrentNote() {
-   let currNoteContainer = document.querySelectorAll('.note-container')[currMeasureIdx];
-   let currNote = currNoteContainer.querySelectorAll('.note')[currNoteIdx];
-   currNote.classList.toggle("active");
+   getCurrNote().classList.toggle("active");
 }
 
 function removeRow(e) {
@@ -164,6 +162,8 @@ function createRemoveButton() {
    if (nbMeasures > 1) {
       let firstRemoveBtn = document.querySelector('.remove-btn');
       firstRemoveBtn.disabled = false;
+   } else {
+      removeButton.disabled = true;
    }
 
    return removeButton;
