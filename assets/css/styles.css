@@ -1,10 +1,7 @@
-:root{
-   --theme-color1: rgb(26, 18, 11);
-   --theme-color2: rgb(60, 42, 33);
-   --theme-color3: rgb(213, 206, 163);
-   --theme-color4: rgb(229, 229, 203);
-
-   --theme-color4-transp: rgba(229, 229, 203, 0.8);
+:root {
+  --main-background-color: rgba(255, 255, 255, 0.8);
+  --disabled-button-bg: rgba(63, 63, 63, 0.8);
+  --cobalt-blue: #0047ab;
 }
 
 * {
@@ -16,16 +13,182 @@
 
 body {
   height: 100vh;
-  background-color: var(--theme-color1);
+  background: url("../images/bright-yellow-fire-blazing-against-night-sky-generated-by-ai.jpg")
+    no-repeat center/cover;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-flow: column nowrap;
+  justify-content: center;
+  gap: 20px;
 }
 
 .container {
-  width: 60%;
-  height: 250px;
-  background-color: var(--theme-color4);
-  border-radius: 15px;
-  shadow: 0 0 3px;
+  width: 40%;
+  min-width: 350px;
+  padding: 20px;
+  height: fit-content;
+  background-color: var(--main-background-color);
+  border-radius: 10px;
+  box-shadow: 0 0 3px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+}
+
+#configuration {
+  justify-content: center;
+}
+
+#configuration * {
+  font-size: 1.3rem;
+}
+
+/* ----------------- Input elements ------------------------ */
+input {
+  display: block;
+  text-align: center;
+  border-radius: 10px;
+  border: solid 1px gray;
+  padding: 5px 0 5px 10px;
+}
+
+input#bpm {
+  width: 30%;
+}
+
+input.beats-per-bar,
+input.note-value {
+  width: 20%;
+  height: 100%;
+  flex: 1;
+}
+
+span {
+  display: flex;
+  align-items: center;
+}
+
+input.beats-per-bar,
+input.note-value,
+#measure-container span {
+  font-size: 1.2rem;
+}
+
+/* ------------------------------------- Metronome related classes */
+.row {
+  display: flex;
+  flex-flow: row wrap;
+  /* background-color: #fff; */
+  width: 80%;
+  margin: 10px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.signature-container {
+  display: flex;
+  width: 35%;
+  height: 100%;
+  gap: 2px;
+  margin-right: 10px;
+}
+
+.note-container {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 3px;
+  flex: 2;
+}
+
+div.note {
+  width: 0.6rem;
+  height: 0.6rem;
+  border: solid 1px gray;
+  border-radius: 0.5rem;
+}
+
+div.note.strong {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+div.note.active {
+  background-color: gray;
+}
+/* -------------------------------- Buttons ------------------------------ */
+#buttons {
+  justify-content: center;
+  gap: 15px;
+}
+
+i {
+  padding: 8px;
+  width: 3rem;
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  border: solid 1px gray;
+  transition: 0.3s;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+#play-btn,
+#stop-btn,
+#add-btn {
+  font-size: 2rem;
+}
+
+.remove-btn {
+  font-size: 1.2rem;
+}
+
+#play-btn {
+  color: green;
+}
+
+#play-btn:hover {
+  color: #fff;
+  background-color: green;
+}
+
+#stop-btn {
+  color: red;
+}
+
+#stop-btn:hover {
+  color: #fff;
+  background-color: red;
+}
+
+.remove-btn:disabled,
+#play-btn:disabled,
+#stop-btn:disabled {
+  color: #000;
+  background-color: var(--disabled-button-bg);
+  cursor: auto;
+}
+
+#add-btn {
+  color: var(--cobalt-blue);
+}
+
+#add-btn:hover {
+  color: #fff;
+  background-color: var(--cobalt-blue);
+}
+
+.remove-btn {
+  color: #000;
+}
+
+.remove-btn:hover:enabled {
+  color: #fff;
+  background-color: #000;
 }
