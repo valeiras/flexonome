@@ -13,7 +13,7 @@
 
 body {
   height: 100vh;
-  background: url("../images/bright-yellow-fire-blazing-against-night-sky-generated-by-ai.jpg")
+  background: url("../images/Prettier-glock.jpg")
     no-repeat center/cover;
   display: flex;
   justify-content: center;
@@ -24,8 +24,9 @@ body {
 }
 
 .container {
-  width: 40%;
-  min-width: 350px;
+  /* width: 30%; */
+  width: fit-content;
+  min-width: 300px;
   padding: 20px;
   height: fit-content;
   background-color: var(--main-background-color);
@@ -55,12 +56,12 @@ input {
 }
 
 input#bpm {
-  width: 30%;
+  width: 6rem;
 }
 
 input.beats-per-bar,
 input.note-value {
-  width: 20%;
+  width: 4rem;
   height: 100%;
   flex: 1;
 }
@@ -80,9 +81,10 @@ input.note-value,
 .row {
   display: flex;
   flex-flow: row wrap;
+  width: fit-content;
   /* background-color: #fff; */
-  width: 80%;
-  margin: 10px;
+  /* width: 90%; */
+  margin: 5px;
   align-items: center;
   justify-content: space-between;
   gap: 5px;
@@ -90,7 +92,6 @@ input.note-value,
 
 .signature-container {
   display: flex;
-  width: 35%;
   height: 100%;
   gap: 2px;
   margin-right: 10px;
@@ -100,8 +101,9 @@ input.note-value,
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 3px;
-  flex: 2;
+  gap: 1px;
+  flex: 1;
+  width: 12rem;
 }
 
 div.note {
@@ -109,11 +111,14 @@ div.note {
   height: 0.6rem;
   border: solid 1px gray;
   border-radius: 0.5rem;
+  cursor: pointer;
+  margin: 0.1rem;
 }
 
 div.note.strong {
   width: 0.8rem;
   height: 0.8rem;
+  margin:0rem;
 }
 
 div.note.active {

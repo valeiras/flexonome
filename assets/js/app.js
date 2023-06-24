@@ -102,6 +102,9 @@ function removeRow(e) {
 function createNoteContainer(beatsPerBar) {
    let noteContainer = document.createElement('div');
    noteContainer.classList.add('note-container');
+   noteContainer.addEventListener('click', function (e) {
+      e.target.classList.toggle("strong");
+   })
    for (let ii = 0; ii < beatsPerBar; ii++) {
       let newNote = document.createElement('div');
       newNote.classList.add('note');
@@ -241,5 +244,4 @@ stopBtn.addEventListener('click', function () {
 })
 
 addBtn.addEventListener("click", addNewRow);
-document.querySelector(".remove-btn").addEventListener("click", removeRow);
-document.querySelector(".beats-per-bar").addEventListener('change', changeBeatsPerBar);
+document.addEventListener("DOMContentLoaded", addNewRow);
