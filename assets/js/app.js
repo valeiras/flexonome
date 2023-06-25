@@ -113,13 +113,16 @@ function changeBeatsPerBar(e) {
 function createNoteContainer(beatsPerBar) {
    let noteContainer = document.createElement('div');
    noteContainer.classList.add('note-container');
-   noteContainer.addEventListener('click', function (e) {
-      e.target.classList.toggle("strong");
-      if (!isPlaying) {
-         if (e.target.classList.contains('strong')) {
-            playSound(strongSound);
-         } else {
-            playSound(softSound);
+   noteContainer.addEventListener('click', function (evt) {
+      if (evt.target.classList.contains('note')) {
+         evt.target.classList.toggle("strong");
+         if (!isPlaying) {
+            let measureContainer = evt.target.parentElement.parentElement.parentElement;
+            if (evt.target.classList.contains('strong')) {
+               playSound(measureContainer.strongSound);
+            } else {
+               playSound(measureContainer.softSound);
+            }
          }
       }
    })
@@ -324,6 +327,10 @@ playBtn.addEventListener('click', function () {
       playNote(measureContainer);
    });
 
+   if (measureContainerList.length > 1) {
+      bpmInput.disabled = true;
+   }
+
    playBtn.disabled = true;
    stopBtn.disabled = false;
 
@@ -341,6 +348,7 @@ stopBtn.addEventListener('click', function () {
 
    playBtn.disabled = false;
    stopBtn.disabled = true;
+   bpmInput.disabled = false;
 
    isPlaying = false;
 })
