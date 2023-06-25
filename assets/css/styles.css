@@ -1,5 +1,6 @@
 :root {
   --main-background-color: rgba(255, 255, 255, 0.8);
+  --title-color: rgba(255, 255, 255, 0.9);
   --disabled-button-bg: rgba(63, 63, 63, 0.8);
   --cobalt-blue: #0047ab;
 }
@@ -11,21 +12,43 @@
   font-family: "Roboto", sans-serif;
 }
 
+html {
+  font-size: 18px;
+}
+
+@media (max-width: 1400px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 450px) {
+  html {
+    font-size: 11px;
+  }
+}
+
 body {
-  height: 100vh;
-  background: url("../images/Prettier-glock.jpg") no-repeat center/cover;
+  min-height: 100vh;
+  background: url("../images/wood-bg.jpg") repeat center/cover;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-flow: column nowrap;
   justify-content: center;
-  gap: 20px;
 }
 
 .container {
   width: fit-content;
-  min-width: 300px;
-  padding: 20px;
+  min-width: 20vw;
+  padding: 1.2rem;
+  margin-top: 20px;
   height: fit-content;
   background-color: var(--main-background-color);
   border-radius: 10px;
@@ -36,12 +59,15 @@ body {
   align-items: center;
 }
 
+.filler {
+  flex: 1;
+}
 #configuration {
   justify-content: center;
 }
 
 #configuration * {
-  font-size: 1.3rem;
+  font-size: 1rem;
 }
 
 /* ----------------- Input elements ------------------------ */
@@ -54,12 +80,12 @@ input {
 }
 
 input#bpm {
-  width: 6rem;
+  width: 4rem;
 }
 
 input.beats-per-bar,
 input.note-value {
-  width: 4rem;
+  width: 3rem;
   height: 100%;
   flex: 1;
 }
@@ -72,7 +98,7 @@ span {
 input.beats-per-bar,
 input.note-value,
 #measure-container span {
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 /* ------------------------------------- Metronome related classes */
@@ -80,12 +106,17 @@ input.note-value,
   display: flex;
   flex-flow: row wrap;
   width: fit-content;
-  /* background-color: #fff; */
-  /* width: 90%; */
   margin: 5px;
   align-items: center;
   justify-content: space-between;
   gap: 5px;
+}
+
+.right-align {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  justify-content: flex-end;
 }
 
 .signature-container {
@@ -145,11 +176,11 @@ button {
 #play-btn,
 #stop-btn,
 #add-btn {
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 .remove-btn {
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 #play-btn {
@@ -196,13 +227,20 @@ button {
   background-color: #000;
 }
 
-#author {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  font-size: 1.5rem;
-  background-color: rgba(63, 63, 63, 0.6);
-  padding: 10px;
-  color: #ddd;
+#title {
+  font-size: 5rem;
+  font-family: "Great Vibes", cursive;
+  text-transform: capitalize;
+  color: var(--title-color);
   border-radius: 10px;
+  margin: 10px;
+}
+
+#author {
+  font-size: 1.3rem;
+  font-weight: 300;
+  padding: 5px 10px;
+  color: var(--title-color);
+  border-radius: 10px;
+  margin: 20px;
 }
