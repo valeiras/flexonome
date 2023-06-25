@@ -24,6 +24,8 @@ let metronomeInterval = null;
 let softSound = new Audio('./assets/sounds/softSound.mp3');
 let strongSound = new Audio('./assets/sounds/strongSound.mp3');
 
+let isPlaying = false;
+
 // Next note function
 function playNote() {
 
@@ -44,13 +46,9 @@ function playNote() {
    // We play the current one
    toggleCurrentNote();
    if (getCurrNote().classList.contains('strong')) {
-      strongSound.pause();
-      strongSound.currentTime = 0
-      strongSound.play();
+      playSound(strongSound);
    } else {
-      softSound.pause();
-      softSound.currentTime = 0
-      softSound.play();
+      playSound(softSound);
    }
 
    if (currNoteIdx === 0) {
@@ -61,6 +59,12 @@ function playNote() {
          metronomeInterval = window.setInterval(playNote, currInterval);
       }
    }
+}
+
+function playSound(sound) {
+   sound.pause();
+   sound.currentTime = 0;
+   sound.play();
 }
 
 function getNbNotes(measureIdx) {
@@ -102,6 +106,13 @@ function createNoteContainer(beatsPerBar) {
    noteContainer.classList.add('note-container');
    noteContainer.addEventListener('click', function (e) {
       e.target.classList.toggle("strong");
+      if (!isPlaying) {
+         if (e.target.classList.contains('strong')) {
+            playSound(strongSound);
+         } else {
+            playSound(softSound);
+         }
+      }
    })
    for (let ii = 0; ii < beatsPerBar; ii++) {
       let newNote = document.createElement('div');
@@ -234,6 +245,8 @@ playBtn.addEventListener('click', function () {
    playNote();
    playBtn.disabled = true;
    stopBtn.disabled = false;
+
+   isPlaying = true;
 });
 
 stopBtn.addEventListener('click', function () {
@@ -241,6 +254,8 @@ stopBtn.addEventListener('click', function () {
    toggleCurrentNote();
    playBtn.disabled = false;
    stopBtn.disabled = true;
+
+   isPlaying = false;
 })
 
 addBtn.addEventListener("click", addNewRow);
