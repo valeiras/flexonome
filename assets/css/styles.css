@@ -36,32 +36,55 @@ html {
 
 body {
   min-height: 100vh;
+  min-width: 100%;
+  width: fit-content;
+  margin: auto;
   background: url("../images/wood-bg.jpg") repeat center/cover;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-flow: column nowrap;
   justify-content: center;
+  padding: 20px
 }
 
-.container {
+/* ---------------------- Grid system ---------------------------- */
+.row-container {
+  position: relative;
   width: fit-content;
   min-width: 20vw;
   padding: 1.2rem;
-  margin-top: 20px;
-  height: fit-content;
   background-color: var(--main-background-color);
   border-radius: 10px;
   box-shadow: 0 0 3px;
+  margin-top: 20px;
 
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
 }
 
+.row {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 5px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  flex: 0;
+}
+
+.col-container {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+  gap: 2rem;
+}
+
 .filler {
   flex: 1;
 }
+
 #configuration {
   justify-content: center;
 }
@@ -97,21 +120,11 @@ span {
 
 input.beats-per-bar,
 input.note-value,
-#measure-container span {
+.measure-container span {
   font-size: 1rem;
 }
 
 /* ------------------------------------- Metronome related classes */
-.row {
-  display: flex;
-  flex-flow: row wrap;
-  width: fit-content;
-  margin: 5px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 5px;
-}
-
 .right-align {
   display: flex;
   flex-flow: row wrap;
@@ -123,16 +136,15 @@ input.note-value,
   display: flex;
   height: 100%;
   gap: 2px;
-  margin-right: 10px;
 }
 
 .note-container {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 1px;
+  gap: 0.5px;
   flex: 1;
-  width: 12rem;
+  width: 10rem;
 }
 
 div.note {
@@ -159,9 +171,20 @@ div.note.active {
   gap: 15px;
 }
 
-i {
+i:not(.small) {
   padding: 8px;
   width: 3rem;
+  display: block;
+}
+
+i.small {
+  font-size: 0.8rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 button {
@@ -171,15 +194,20 @@ button {
   transition: 0.3s;
   cursor: pointer;
   background-color: #fff;
+  min-height: none;
+}
+
+button.round {
+  border-radius: 100px;
+  padding: 0;
 }
 
 #play-btn,
-#stop-btn,
-#add-btn {
+#stop-btn {
   font-size: 1.5rem;
 }
 
-.remove-btn {
+.remove-row-btn {
   font-size: 1rem;
 }
 
@@ -201,7 +229,9 @@ button {
   background-color: red;
 }
 
-.remove-btn:disabled,
+.add-btn:disabled,
+.remove-row-btn:disabled,
+.remove-col-btn:disabled,
 #play-btn:disabled,
 #stop-btn:disabled {
   color: #000;
@@ -209,24 +239,58 @@ button {
   cursor: auto;
 }
 
-#add-btn {
-  color: var(--cobalt-blue);
-}
-
-#add-btn:hover {
-  color: #fff;
-  background-color: var(--cobalt-blue);
-}
-
-.remove-btn {
+.remove-row-btn {
   color: #000;
 }
 
-.remove-btn:hover:enabled {
+.remove-row-btn:hover:enabled {
   color: #fff;
   background-color: #000;
 }
 
+.add-row-btn,
+.add-col-btn,
+.remove-col-btn {
+  position: absolute;
+  width: fit-content;
+}
+
+.add-row-btn {
+  bottom: 0;
+  right: 50%;
+  transform: translate(50%, 50%);
+}
+
+.add-col-btn {
+  right: 0;
+  top: 50%;
+  transform: translate(50%, -50%);
+}
+
+.remove-col-btn {
+  left: 0;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: red;
+  background-color: fff;
+}
+
+.remove-col-btn:hover:enabled {
+  color: #fff;
+  background-color: red;
+}
+
+.add-btn {
+  color: var(--cobalt-blue);
+  background-color: #fff;
+}
+
+.add-btn:hover {
+  background-color: var(--cobalt-blue);
+  color: #fff;
+}
+
+/* ----------------------------- Title and author ------------------------ */
 #title {
   font-size: 5rem;
   font-family: "Great Vibes", cursive;
