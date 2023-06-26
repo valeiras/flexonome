@@ -21,27 +21,52 @@ let secondMeasureContainer;
 
 const restartMeasureContainer = {
    currMeasureIdx: -1,
-   currNoteIdx: -1,
-   currInterval: 0,
-   isPlaying: false
+   currNoteIdx: 0,
+   currInterval: 0
 };
 
 // ---------------------- Main play note function -----------------------------
 function playMono(measureContainer) {
    // We unplay the last note and increase the indexes
-   if (measureContainer.currNoteIdx >= 0) {
-      toggleCurrentNote(measureContainer);
-      let nbNotes = getNbNotes(measureContainer, measureContainer.currMeasureIdx);
-      measureContainer.currNoteIdx = ++measureContainer.currNoteIdx % nbNotes;
-   } else {
-      measureContainer.currNoteIdx = 0;
-   }
+   toggleCurrentNote(measureContainer);
+   let nbNotes = getCurrentNbNotes(measureContainer);
+   measureContainer.currNoteIdx = ++measureContainer.currNoteIdx % nbNotes;
 
+   // The first measure container leads the measure count
    if (measureContainer.currNoteIdx === 0) {
-      let nbMeasures = measureContainer.querySelectorAll('.measure').length;
-      measureContainer.currMeasureIdx = ++measureContainer.currMeasureIdx % nbMeasures;
+      startNewMonoMeasure();
+   } else {
+      // We play the current one
+      toggleCurrentNote(measureContainer);
+      if (getCurrentNote(measureContainer).classList.contains('strong')) {
+         playSound(measureContainer.strongSound);
+      } else {
+         playSound(measureContainer.softSound);
+      }
    }
+}
 
+function playPoly(measureContainer) {
+   // We unplay the last note and increase the indexes
+   toggleCurrentNote(measureContainer);
+   let nbNotes = getCurrentNbNotes(measureContainer);
+   measureContainer.currNoteIdx = ++measureContainer.currNoteIdx % nbNotes;
+
+   // The first measure container leads the measure count
+   if (measureContainer.currNoteIdx === 0) {
+      startNewPolyMeasure();
+   } else {
+      // We play the current one
+      toggleCurrentNote(measureContainer);
+      if (getCurrentNote(measureContainer).classList.contains('strong')) {
+         playSound(measureContainer.strongSound);
+      } else {
+         playSound(measureContainer.softSound);
+      }
+   }
+}
+
+function playFirstNote(measureContainer) {
    // We play the current one
    toggleCurrentNote(measureContainer);
    if (getCurrentNote(measureContainer).classList.contains('strong')) {
@@ -50,19 +75,37 @@ function playMono(measureContainer) {
       playSound(measureContainer.softSound);
    }
 
-   // If we are reaching a new measure, we verify if the note value has changed
-   if (measureContainer.currNoteIdx === 0) {
-      let newInterval = getCurrentInterval(measureContainer);
-      if (newInterval !== measureContainer.currInterval) {
-         measureContainer.currInterval = newInterval;
-         window.clearInterval(measureContainer.metronomeInterval);
-         measureContainer.metronomeInterval = window.setInterval(playMono, measureContainer.currInterval, measureContainer);
-      }
+   measureContainer.metronomeInterval = window.setInterval(isPoly ? playPoly : playMono, measureContainer.currInterval, measureContainer);
+}
+
+function startNewPolyMeasure() {
+   // We verify that both have finished the last measure:
+   if (firstMeasureContainer.currNoteIdx === 0 && secondMeasureContainer.currNoteIdx === 0) {
+      measureContainerList.forEach(mc => {
+         increaseMeasureIndex(mc);
+         window.clearInterval(mc.metronomeInterval);
+      })
+      firstMeasureContainer.currInterval = getCurrentInterval(firstMeasureContainer);
+      let measureTime = firstMeasureContainer.currInterval * getCurrentNbNotes(firstMeasureContainer);
+      secondMeasureContainer.currInterval = measureTime / getCurrentNbNotes(secondMeasureContainer);
+
+      playFirstNote(firstMeasureContainer);
+      playFirstNote(secondMeasureContainer);
    }
 }
 
-function playPoly() {
+function startNewMonoMeasure() {
+   increaseMeasureIndex(firstMeasureContainer);
+   window.clearInterval(firstMeasureContainer.metronomeInterval);
+   firstMeasureContainer.currInterval = getCurrentInterval(firstMeasureContainer);
 
+   playFirstNote(firstMeasureContainer);
+}
+
+function increaseMeasureIndex(measureContainer) {
+   let nbMeasures = measureContainer.querySelectorAll('.measure').length;
+   measureContainer.currMeasureIdx = ++measureContainer.currMeasureIdx % nbMeasures;
+   measureContainer.nbNotes = getCurrentNbNotes(measureContainer);
 }
 
 function playSound(sound) {
@@ -92,6 +135,11 @@ function getNbNotes(measureContainer, measureIdx) {
    return noteContainer.querySelectorAll('.note').length;
 }
 
+function getCurrentNbNotes(measureContainer) {
+   let noteContainer = measureContainer.querySelectorAll('.note-container')[measureContainer.currMeasureIdx];
+   return noteContainer.querySelectorAll('.note').length;
+}
+
 function getCurrentNote(measureContainer) {
    let currNoteContainer = measureContainer.querySelectorAll('.note-container')[measureContainer.currMeasureIdx];
    return currNoteContainer.querySelectorAll('.note')[measureContainer.currNoteIdx];
@@ -99,11 +147,8 @@ function getCurrentNote(measureContainer) {
 
 function getCurrentInterval(measureContainer) {
    let noteValues = measureContainer.querySelectorAll('.note-value');
+   let currNoteValue = noteValues[measureContainer.currMeasureIdx].value;
 
-   // We verify that we are within bounds
-   let idx = measureContainer.currMeasureIdx < noteValues.length ? measureContainer.currMeasureIdx : 0;
-
-   let currNoteValue = noteValues[idx].value;
    let bpm = bpmInput.value;
 
    return (MS_PER_MIN / bpm) * (QUAVERS_PER_BAR / currNoteValue);
@@ -111,6 +156,7 @@ function getCurrentInterval(measureContainer) {
 
 function toggleCurrentNote(measureContainer) {
    getCurrentNote(measureContainer).classList.toggle("active");
+
 }
 
 function changeBeatsPerBar(e) {
@@ -257,12 +303,14 @@ function createRemoveColButton() {
 // Event listener for the MeasureContainer buttons ---------------------------------------
 function manageMeasureContainerButtons(evt) {
    let btn = evt.target.parentElement;
-   if (btn.classList.contains('add-row-btn')) {
-      addRow(this);
-   } else if (btn.id === 'add-col-btn') {
-      addMeasureContainer(false);
-   } else if (btn.id === 'remove-col-btn') {
-      removeMeasureContainer(this);
+   if (!btn.disabled) {
+      if (btn.classList.contains('add-row-btn')) {
+         addRow(this);
+      } else if (btn.id === 'add-col-btn') {
+         addMeasureContainer(false);
+      } else if (btn.id === 'remove-col-btn') {
+         removeMeasureContainer(this);
+      }
    }
 }
 
@@ -296,8 +344,8 @@ function addMeasureContainer(isFirst) {
       isPlaying: false,
       metronomeInterval: null,
       isFirst: isFirst,
-      softSound: new Audio('./assets/sounds/softSound.mp3'),
-      strongSound: new Audio('./assets/sounds/strongSound.mp3')
+      softSound: isFirst ? new Audio('./assets/sounds/softSound2.mp3') : new Audio('./assets/sounds/softSound.mp3'),
+      strongSound: isFirst ? new Audio('./assets/sounds/strongSound2.mp3') : new Audio('./assets/sounds/strongSound.mp3')
    }
 
    Object.assign(newMeasureContainer, properties);
@@ -306,7 +354,6 @@ function addMeasureContainer(isFirst) {
 
    let addRowButton = createAddRowButton();
    newMeasureContainer.appendChild(addRowButton);
-
 
    // The first column has an add button, but not a remove button. 
    // The add button is disabled after a second column is added, so there can be only two measure containers
@@ -321,6 +368,7 @@ function addMeasureContainer(isFirst) {
       newMeasureContainer.appendChild(removeColButton);
       secondMeasureContainer = newMeasureContainer;
       disableAddColButton();
+      document.querySelector('#title').innerText = 'polyflexonome';
    }
 
    addRow(newMeasureContainer);
@@ -332,7 +380,7 @@ function addMeasureContainer(isFirst) {
 function removeRow(evt) {
    let rowToRemove = evt.target.parentElement.parentElement;
    let measureContainer = rowToRemove.parentElement;
-   console.log(measureContainer);
+
    let rowList = Array.prototype.slice.call(measureContainer.querySelectorAll('.measure'));
    let idxToRemove = rowList.indexOf(rowToRemove);
 
@@ -354,6 +402,7 @@ function removeRow(evt) {
 function removeMeasureContainer(measureContainer) {
    measureContainer.remove();
    isPoly = false;
+   document.querySelector('#title').innerText = 'flexonome';
    enableAddColButton();
    measureContainerList.pop();
 }
@@ -399,19 +448,24 @@ playBtn.addEventListener('click', function () {
    if (isPoly) {
       // In polyrythm mode we do not accept input changes during playback
       disableAllInputs(true);
-      playPoly();
+      measureContainerList.forEach(mc => {
+         Object.assign(mc, restartMeasureContainer);
+         mc.isPlaying = true;
+      })
+      startNewPolyMeasure();
    } else {
+      Object.assign(firstMeasureContainer, restartMeasureContainer);
       firstMeasureContainer.isPlaying = true;
-      playMono(firstMeasureContainer);
+      startNewMonoMeasure();
    }
 });
 
 stopBtn.addEventListener('click', function () {
-   measureContainerList.forEach(measureContainer => {
-      if (measureContainer.isPlaying) {
-         window.clearInterval(measureContainer.metronomeInterval);
-         toggleCurrentNote(measureContainer);
-         Object.assign(measureContainer, restartMeasureContainer);
+   measureContainerList.forEach(mc => {
+      if (mc.isPlaying) {
+         window.clearInterval(mc.metronomeInterval);
+         toggleCurrentNote(mc);
+         mc.isPlaying = false;
       }
    });
 
