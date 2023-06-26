@@ -352,6 +352,10 @@ function addMeasureContainer(isFirst) {
 
    Object.assign(newMeasureContainer, properties);
 
+   // Hack: the first time they are played audio elements make weird things
+   testAudio(newMeasureContainer.softSound);
+   testAudio(newMeasureContainer.strongSound);
+
    mainContainer.appendChild(newMeasureContainer);
 
    let addRowButton = createAddRowButton();
@@ -377,6 +381,13 @@ function addMeasureContainer(isFirst) {
 
    newMeasureContainer.addEventListener('click', manageMeasureContainerButtons);
    measureContainerList.push(newMeasureContainer);
+}
+
+function testAudio(sound) {
+   sound.volume = 0;
+   sound.play();
+   sound.pause();
+   sound.volume = 1;
 }
 
 function removeRow(evt) {
