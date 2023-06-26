@@ -24,20 +24,20 @@ html {
 
 @media (max-width: 768px) {
   html {
-    font-size: 14px;
+    font-size: 9px;
   }
 }
 
 @media (max-width: 450px) {
   html {
-    font-size: 11px;
+    font-size: 7px;
   }
 }
 
 body {
   min-height: 100vh;
   min-width: 100%;
-  width: fit-content;
+  width: 100%;
   margin: auto;
   background: url("../images/wood-bg.jpg") repeat center/cover;
   display: flex;
@@ -53,9 +53,9 @@ body {
   position: relative;
   width: fit-content;
   min-width: 20vw;
-  padding: 1.2rem;
+  padding: 1rem;
   background-color: var(--main-background-color);
-  border-radius: 10px;
+  border-radius: .9rem;
   box-shadow: 0 0 3px;
   margin-top: 20px;
 
@@ -67,8 +67,8 @@ body {
 .row {
   display: flex;
   flex-flow: row nowrap;
-  margin: 5px;
-  align-items: center;
+  margin: 10px 0 10px;
+  align-items: stretch;
   justify-content: space-between;
   gap: 5px;
   flex: 0;
@@ -97,7 +97,7 @@ body {
 input {
   display: block;
   text-align: center;
-  border-radius: 10px;
+  border-radius: .6rem;
   border: solid 1px gray;
   padding: 5px 0 5px 10px;
 }
@@ -178,7 +178,7 @@ div.note.active {
 }
 
 i:not(.small) {
-  padding: 8px;
+  padding: .5rem;
   width: 3rem;
   display: block;
 }
@@ -195,7 +195,7 @@ i.small {
 
 button {
   border: none;
-  border-radius: 10px;
+  border-radius: .6rem;
   border: solid 1px gray;
   transition: 0.3s;
   cursor: pointer;

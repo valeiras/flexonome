@@ -156,13 +156,13 @@ function getCurrentInterval(measureContainer) {
 
 function toggleCurrentNote(measureContainer) {
    getCurrentNote(measureContainer).classList.toggle("active");
-
 }
 
-function changeBeatsPerBar(e) {
-   let desiredNbNotes = e.target.value;
+function changeBeatsPerBar(evt) {
+   verifyInputBounds(evt);
+   let desiredNbNotes = evt.target.value;
 
-   let currRow = e.target.parentElement.parentElement;
+   let currRow = evt.target.parentElement.parentElement;
    let noteContainer = currRow.querySelector('.note-container');
    let currNbNotes = noteContainer.querySelectorAll('.note').length;
    let notes = noteContainer.querySelectorAll('.note');
@@ -211,14 +211,14 @@ function createNoteContainer(beatsPerBar) {
    return noteContainer;
 }
 
-function createBeatsPerBarInput(beatsPerBar) {
+function createBeatsPerBarInput(beatsPerBar, isFirst) {
    let beatsPerBarInput = document.createElement('input');
 
    beatsPerBarInput.classList.add('beats-per-bar');
    beatsPerBarInput.setAttribute('type', 'number');
    beatsPerBarInput.setAttribute('value', beatsPerBar);
    beatsPerBarInput.setAttribute('min', 1);
-   beatsPerBarInput.setAttribute('max', 12);
+   beatsPerBarInput.setAttribute('max', isFirst ? 12 : 24);
    beatsPerBarInput.addEventListener('change', changeBeatsPerBar);
 
    return beatsPerBarInput;
@@ -229,6 +229,9 @@ function createNoteValueInput(noteValue) {
    noteValueInput.classList.add('note-value');
    noteValueInput.setAttribute('type', 'number');
    noteValueInput.setAttribute('value', noteValue);
+   noteValueInput.setAttribute('min', 1);
+   noteValueInput.setAttribute('max', 16);
+   noteValueInput.addEventListener("change", verifyInputBounds);
    return noteValueInput;
 }
 
@@ -236,7 +239,7 @@ function createSignatureContainer(beatsPerBar, noteValue, isFirst) {
    let signatureContainer = document.createElement('div');
    signatureContainer.classList.add('signature-container');
 
-   let beatsPerBarInput = createBeatsPerBarInput(beatsPerBar);
+   let beatsPerBarInput = createBeatsPerBarInput(beatsPerBar, isFirst);
    signatureContainer.appendChild(beatsPerBarInput);
 
    if (isFirst) {
@@ -247,7 +250,6 @@ function createSignatureContainer(beatsPerBar, noteValue, isFirst) {
       let noteValueInput = createNoteValueInput(noteValue);
       signatureContainer.appendChild(noteValueInput);
    }
-
    return signatureContainer;
 }
 
@@ -439,6 +441,15 @@ function verifyRemoveRowButtonDisabled(measureContainer) {
    }
 }
 
+function verifyInputBounds(evt) {
+   let inputElement = evt.target;
+   if (parseInt(inputElement.value) > parseInt(inputElement.max)) {
+      inputElement.value = inputElement.max;
+   } else if (parseInt(inputElement.value) < parseInt(inputElement.min)) {
+      inputElement.value = inputElement.min;
+   }
+}
+
 playBtn.addEventListener('click', function () {
    playBtn.disabled = true;
    stopBtn.disabled = false;
@@ -484,3 +495,4 @@ stopBtn.addEventListener('click', function () {
 })
 
 document.addEventListener("DOMContentLoaded", addMeasureContainer, true);
+bpmInput.addEventListener("change", verifyInputBounds);
