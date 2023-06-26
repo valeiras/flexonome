@@ -24,13 +24,13 @@ html {
 
 @media (max-width: 768px) {
   html {
-    font-size: 10px;
+    font-size: 13px;
   }
 }
 
 @media (max-width: 450px) {
   html {
-    font-size: 8px;
+    font-size: 11px;
   }
 }
 
@@ -150,11 +150,11 @@ input.note-value,
   align-items: center;
   gap: 0.5px;
   flex: 1;
-  width: 10rem;
+  width: 5rem;
 }
 
 div.note {
-  width: 0.6rem;
+  width: 0.4rem;
   height: 0.6rem;
   border: solid 1px gray;
   border-radius: 0.5rem;
@@ -163,7 +163,7 @@ div.note {
 }
 
 div.note.strong {
-  width: 0.8rem;
+  width: 0.6rem;
   height: 0.8rem;
   margin: 0rem;
 }
