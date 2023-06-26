@@ -231,7 +231,7 @@ button.round {
 
 .add-btn:disabled,
 .remove-row-btn:disabled,
-.remove-col-btn:disabled,
+#remove-col-btn:disabled,
 #play-btn:disabled,
 #stop-btn:disabled {
   color: #000;
@@ -249,8 +249,8 @@ button.round {
 }
 
 .add-row-btn,
-.add-col-btn,
-.remove-col-btn {
+#add-col-btn,
+#remove-col-btn {
   position: absolute;
   width: fit-content;
 }
@@ -261,13 +261,13 @@ button.round {
   transform: translate(50%, 50%);
 }
 
-.add-col-btn {
+#add-col-btn {
   right: 0;
   top: 50%;
   transform: translate(50%, -50%);
 }
 
-.remove-col-btn {
+#remove-col-btn {
   left: 0;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -275,7 +275,7 @@ button.round {
   background-color: fff;
 }
 
-.remove-col-btn:hover:enabled {
+#remove-col-btn:hover:enabled {
   color: #fff;
   background-color: red;
 }

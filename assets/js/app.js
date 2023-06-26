@@ -10,13 +10,24 @@ const mainContainer = document.querySelector('#main-container');
 const playBtn = document.querySelector('#play-btn');
 const stopBtn = document.querySelector('#stop-btn');
 
-// Variables for input
 const bpmInput = document.querySelector('#bpm');
 
 let isPlaying = false;
+let isPoly = false;
+
+let measureContainerList = [];
+let firstMeasureContainer;
+let secondMeasureContainer;
+
+const restartMeasureContainer = {
+   currMeasureIdx: -1,
+   currNoteIdx: -1,
+   currInterval: 0,
+   isPlaying: false
+};
 
 // ---------------------- Main play note function -----------------------------
-function playNote(measureContainer) {
+function playMono(measureContainer) {
    // We unplay the last note and increase the indexes
    if (measureContainer.currNoteIdx >= 0) {
       toggleCurrentNote(measureContainer);
@@ -45,15 +56,34 @@ function playNote(measureContainer) {
       if (newInterval !== measureContainer.currInterval) {
          measureContainer.currInterval = newInterval;
          window.clearInterval(measureContainer.metronomeInterval);
-         measureContainer.metronomeInterval = window.setInterval(playNote, measureContainer.currInterval, measureContainer);
+         measureContainer.metronomeInterval = window.setInterval(playMono, measureContainer.currInterval, measureContainer);
       }
    }
+}
+
+function playPoly() {
+
 }
 
 function playSound(sound) {
    sound.pause();
    sound.currentTime = 0;
    sound.play();
+}
+
+// Greatest common divisor by the euclidean algorithm
+function gcd(a, b) {
+   a = Math.round(a);
+   b = Math.round(b);
+   while (a != b) {
+      if (a > b) {
+         a -= b;
+      }
+      else {
+         b -= a;
+      }
+   }
+   return a;
 }
 
 // ----------------------------------------- Getters ---------------------------------
@@ -156,24 +186,26 @@ function createNoteValueInput(noteValue) {
    return noteValueInput;
 }
 
-function createSignatureContainer(beatsPerBar, noteValue) {
+function createSignatureContainer(beatsPerBar, noteValue, isFirst) {
    let signatureContainer = document.createElement('div');
    signatureContainer.classList.add('signature-container');
 
    let beatsPerBarInput = createBeatsPerBarInput(beatsPerBar);
    signatureContainer.appendChild(beatsPerBarInput);
 
-   let span = document.createElement('span');
-   span.innerText = "/";
-   signatureContainer.appendChild(span);
+   if (isFirst) {
+      let span = document.createElement('span');
+      span.innerText = "/";
+      signatureContainer.appendChild(span);
 
-   let noteValueInput = createNoteValueInput(noteValue);
-   signatureContainer.appendChild(noteValueInput);
+      let noteValueInput = createNoteValueInput(noteValue);
+      signatureContainer.appendChild(noteValueInput);
+   }
 
    return signatureContainer;
 }
 
-function createRemoveButton(measureContainer) {
+function createRemoveRowButton(measureContainer) {
    let removeButton = document.createElement('button');
    removeButton.classList.add('remove-row-btn');
    removeButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
@@ -202,14 +234,16 @@ function createAddRowButton() {
 
 function createAddColButton() {
    let addColButton = document.createElement('button');
-   addColButton.classList.add('add-col-btn', 'add-btn', 'round');
+   addColButton.id = 'add-col-btn';
+   addColButton.classList.add('add-btn', 'round');
    addColButton.innerHTML = '<i class="fa-solid fa-plus small"></i>';
    return addColButton;
 }
 
 function createRemoveColButton() {
    let removeColButton = document.createElement('button');
-   removeColButton.classList.add('remove-col-btn', 'round');
+   removeColButton.id = 'remove-col-btn';
+   removeColButton.classList.add('round');
    removeColButton.innerHTML = '<i class="fa-solid fa-minus small"></i>';
 
    let nbCols = mainContainer.querySelectorAll('.measure-container').length;
@@ -225,22 +259,11 @@ function manageMeasureContainerButtons(evt) {
    let btn = evt.target.parentElement;
    if (btn.classList.contains('add-row-btn')) {
       addRow(this);
-   } else if (btn.classList.contains('add-col-btn')) {
-      addMeasureContainer();
-      enableRemoveColButton();
-   } else if (btn.classList.contains('remove-col-btn')) {
+   } else if (btn.id === 'add-col-btn') {
+      addMeasureContainer(false);
+   } else if (btn.id === 'remove-col-btn') {
       removeMeasureContainer(this);
    }
-}
-
-function enableRemoveColButton() {
-   let firstRemoveBtn = document.querySelector('.remove-col-btn');
-   firstRemoveBtn.disabled = false;
-}
-
-function disableRemoveColButton() {
-   let firstRemoveBtn = document.querySelector('.remove-col-btn');
-   firstRemoveBtn.disabled = true;
 }
 
 function addRow(measureContainer) {
@@ -254,37 +277,56 @@ function addRow(measureContainer) {
    let noteContainer = createNoteContainer(beatsPerBar);
    newRow.appendChild(noteContainer);
 
-   let signatureContainer = createSignatureContainer(beatsPerBar, noteValue);
+   let signatureContainer = createSignatureContainer(beatsPerBar, noteValue, measureContainer.isFirst);
    newRow.appendChild(signatureContainer);
 
-   let removeButton = createRemoveButton(measureContainer);
-   newRow.appendChild(removeButton);
+   let removeRowButton = createRemoveRowButton(measureContainer);
+   newRow.appendChild(removeRowButton);
 }
 
-function addMeasureContainer() {
+function addMeasureContainer(isFirst) {
    let newMeasureContainer = document.createElement('div');
    newMeasureContainer.classList.add('row-container', 'measure-container');
+
+   // We give the new measure container a series of useful properties
+   let properties = {
+      currMeasureIdx: -1,
+      currNoteIdx: -1,
+      currInterval: 0,
+      isPlaying: false,
+      metronomeInterval: null,
+      isFirst: isFirst,
+      softSound: new Audio('./assets/sounds/softSound.mp3'),
+      strongSound: new Audio('./assets/sounds/strongSound.mp3')
+   }
+
+   Object.assign(newMeasureContainer, properties);
+
    mainContainer.appendChild(newMeasureContainer);
 
    let addRowButton = createAddRowButton();
-   let addColButton = createAddColButton();
-   let removeColButton = createRemoveColButton();
-
    newMeasureContainer.appendChild(addRowButton);
-   newMeasureContainer.appendChild(addColButton);
-   newMeasureContainer.appendChild(removeColButton);
+
+
+   // The first column has an add button, but not a remove button. 
+   // The add button is disabled after a second column is added, so there can be only two measure containers
+   if (isFirst) {
+      let addColButton = createAddColButton();
+      newMeasureContainer.appendChild(addColButton);
+      firstMeasureContainer = newMeasureContainer;
+   }
+   else {
+      isPoly = true;
+      let removeColButton = createRemoveColButton();
+      newMeasureContainer.appendChild(removeColButton);
+      secondMeasureContainer = newMeasureContainer;
+      disableAddColButton();
+   }
 
    addRow(newMeasureContainer);
 
-   newMeasureContainer.currMeasureIdx = -1;
-   newMeasureContainer.currNoteIdx = -1;
-   newMeasureContainer.currInterval = 0;
-   newMeasureContainer.isPlaying = false;
-   newMeasureContainer.metronomeInterval = null;
-   newMeasureContainer.softSound = new Audio('./assets/sounds/softSound.mp3');
-   newMeasureContainer.strongSound = new Audio('./assets/sounds/strongSound.mp3');
-
    newMeasureContainer.addEventListener('click', manageMeasureContainerButtons);
+   measureContainerList.push(newMeasureContainer);
 }
 
 function removeRow(evt) {
@@ -311,46 +353,80 @@ function removeRow(evt) {
 
 function removeMeasureContainer(measureContainer) {
    measureContainer.remove();
-   let nbCols = mainContainer.querySelectorAll('.measure-container').length;
-   if (nbCols === 1) {
-      disableRemoveColButton();
+   isPoly = false;
+   enableAddColButton();
+   measureContainerList.pop();
+}
+
+function enableAddColButton() {
+   let addColButton = document.querySelector('#add-col-btn');
+   addColButton.disabled = false;
+}
+
+function disableAddColButton() {
+   let addColButton = document.querySelector('#add-col-btn');
+   addColButton.disabled = true;
+}
+
+function disableAllInputs(disable) {
+   document.querySelector('#remove-col-btn').disabled = disable;
+   disableList(document.querySelectorAll('input'), disable);
+   disableList(document.querySelectorAll('.add-row-btn'), disable);
+   disableList(document.querySelectorAll('.remove-row-btn'), disable);
+}
+
+
+function disableList(list, disable) {
+   list.forEach(elem => {
+      elem.disabled = disable;
+   })
+}
+
+function verifyRemoveRowButtonDisabled(measureContainer) {
+   // If this is the first (and thus only) measure, it cannot be removed
+   let nbMeasures = measureContainer.querySelectorAll('.measure').length;
+   if (nbMeasures === 1) {
+      measureContainer.querySelector('.remove-row-btn').disabled = true;
    }
 }
 
 playBtn.addEventListener('click', function () {
-   let measureContainerList = document.querySelectorAll('.measure-container');
-   measureContainerList.forEach(measureContainer => {
-      measureContainer.currMeasureIdx = -1;
-      measureContainer.currNoteIdx = -1;
-      measureContainer.currInterval = 0;
-      measureContainer.isPlaying = true;
-      playNote(measureContainer);
-   });
-
-   if (measureContainerList.length > 1) {
-      bpmInput.disabled = true;
-   }
-
    playBtn.disabled = true;
    stopBtn.disabled = false;
 
    isPlaying = true;
+
+   if (isPoly) {
+      // In polyrythm mode we do not accept input changes during playback
+      disableAllInputs(true);
+      playPoly();
+   } else {
+      firstMeasureContainer.isPlaying = true;
+      playMono(firstMeasureContainer);
+   }
 });
 
 stopBtn.addEventListener('click', function () {
-   let measureContainerList = document.querySelectorAll('.measure-container');
    measureContainerList.forEach(measureContainer => {
       if (measureContainer.isPlaying) {
          window.clearInterval(measureContainer.metronomeInterval);
          toggleCurrentNote(measureContainer);
+         Object.assign(measureContainer, restartMeasureContainer);
       }
    });
 
+   // We reenable the inputs
+   if (isPoly) {
+      disableAllInputs(false);
+   }
+   measureContainerList.forEach(measureContainer => {
+      verifyRemoveRowButtonDisabled(measureContainer);
+   })
+
    playBtn.disabled = false;
    stopBtn.disabled = true;
-   bpmInput.disabled = false;
 
    isPlaying = false;
 })
 
-document.addEventListener("DOMContentLoaded", addMeasureContainer);
+document.addEventListener("DOMContentLoaded", addMeasureContainer, true);
