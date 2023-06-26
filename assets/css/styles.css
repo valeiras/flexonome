@@ -24,13 +24,13 @@ html {
 
 @media (max-width: 768px) {
   html {
-    font-size: 13px;
+    font-size: 14px;
   }
 }
 
 @media (max-width: 450px) {
   html {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 
@@ -45,7 +45,6 @@ body {
   align-items: center;
   flex-flow: column nowrap;
   justify-content: center;
-  padding: 20px;
 }
 
 /* ---------------------- Grid system ---------------------------- */
@@ -55,13 +54,18 @@ body {
   min-width: 20vw;
   padding: 1rem;
   background-color: var(--main-background-color);
-  border-radius: .9rem;
+  border-radius: 0.9rem;
   box-shadow: 0 0 3px;
   margin-top: 20px;
 
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
+}
+
+.measure-container {
+  width: 45%;
+  max-width: 500px;
 }
 
 .row {
@@ -72,11 +76,14 @@ body {
   justify-content: space-between;
   gap: 5px;
   flex: 0;
+  width: 95%;
 }
 
 .col-container {
+  width: 100%;
   display: flex;
   flex-flow: row nowrap;
+  justify-content: center;
   align-items: stretch;
   gap: 2rem;
 }
@@ -97,15 +104,9 @@ body {
 input {
   display: block;
   text-align: center;
-  border-radius: .6rem;
+  border-radius: 0.6rem;
   border: solid 1px gray;
   padding: 5px 0 5px 10px;
-}
-
-@media (max-width: 768px) {
-  input {
-    padding: 5px 0 5px 0px;
-  }
 }
 
 input#bpm {
@@ -117,6 +118,36 @@ input.note-value {
   width: 3rem;
   height: 100%;
   flex: 1;
+}
+
+i:not(.small) {
+  padding: 0.5rem;
+  width: 3rem;
+  display: block;
+}
+
+i.small {
+  font-size: 0.8rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  input {
+    padding: 5px 0 5px 0px;
+  }
+  input.beats-per-bar,
+  input.note-value {
+    width: 2rem;
+  }
+
+  .remove-row-btn {
+    width: 1.5rem;
+  }
 }
 
 span {
@@ -146,7 +177,7 @@ input.note-value,
 
 .note-container {
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: center;
   gap: 0.5px;
   flex: 1;
@@ -154,7 +185,7 @@ input.note-value,
 }
 
 div.note {
-  width: 0.4rem;
+  width: 0.6rem;
   height: 0.6rem;
   border: solid 1px gray;
   border-radius: 0.5rem;
@@ -163,7 +194,7 @@ div.note {
 }
 
 div.note.strong {
-  width: 0.6rem;
+  width: 0.8rem;
   height: 0.8rem;
   margin: 0rem;
 }
@@ -177,30 +208,19 @@ div.note.active {
   gap: 15px;
 }
 
-i:not(.small) {
-  padding: .5rem;
-  width: 3rem;
-  display: block;
-}
 
-i.small {
-  font-size: 0.8rem;
-  width: 1.1rem;
-  height: 1.1rem;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 button {
   border: none;
-  border-radius: .6rem;
+  border-radius: 0.6rem;
   border: solid 1px gray;
   transition: 0.3s;
   cursor: pointer;
   background-color: #fff;
   min-height: none;
+  text-align: center;
+  display: flex;
+  justify-content: center;
 }
 
 button.round {
